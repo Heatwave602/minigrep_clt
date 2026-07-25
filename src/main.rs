@@ -5,6 +5,7 @@ use std::path::Path;
 use std::{env};
 use std::process;
 use std::error::Error;
+use minigrep::search;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -25,16 +26,15 @@ fn main() {
 
 fn run(config: &Config) -> Result<(), Box<dyn Error>> {
     let it = read_lines(config.file_path)?;
-
-    for line in it {
-        println!("{}", line.unwrap());
+    for line in search(config.query, &it) {
+        println!("{line}");
     }
 
     Ok(())
 }
 
 struct Config<'a> {
-    // query:      &'a str,
+    query:      &'a str,
     file_path:  &'a str,
 }
 
@@ -43,10 +43,10 @@ impl<'a> Config<'a> {
         let len = args.len();
         if len < 3 {return Err("not enough arguments");}
 
-        // let query     = &args[1];
+        let query     = &args[1];
         let file_path = &args[2];
 
-        Ok(Config { /*query*/ file_path })
+        Ok(Config { query, file_path })
     }
 }
 
