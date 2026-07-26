@@ -1,6 +1,3 @@
-// use std::fs::File;
-// use std::io::{self, BufRead};
-// use std::path::Path;
 
 use std::{fs, env};
 use std::process;
@@ -49,9 +46,3 @@ impl<'a> Config<'a> {
         Ok(Config { query, file_path })
     }
 }
-
-// fn read_lines<P>(path: P) -> io::Result<io::Lines<io::BufReader<File>>> 
-// where P: AsRef<Path> {
-//     let file = File::open(path)?;
-//     Ok(io::BufReader::new(file).lines())
-// }
