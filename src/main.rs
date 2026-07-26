@@ -1,8 +1,8 @@
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
+// use std::fs::File;
+// use std::io::{self, BufRead};
+// use std::path::Path;
 
-use std::{env};
+use std::{fs, env};
 use std::process;
 use std::error::Error;
 use minigrep::search;
@@ -25,8 +25,8 @@ fn main() {
 }
 
 fn run(config: &Config) -> Result<(), Box<dyn Error>> {
-    let it = read_lines(config.file_path)?;
-    for line in search(config.query, &it) {
+    let contents = fs::read_to_string(config.file_path)?;
+    for line in search(config.query, &contents) {
         println!("{line}");
     }
 
@@ -50,8 +50,8 @@ impl<'a> Config<'a> {
     }
 }
 
-fn read_lines<P>(path: P) -> io::Result<io::Lines<io::BufReader<File>>> 
-where P: AsRef<Path> {
-    let file = File::open(path)?;
-    Ok(io::BufReader::new(file).lines())
-}
+// fn read_lines<P>(path: P) -> io::Result<io::Lines<io::BufReader<File>>> 
+// where P: AsRef<Path> {
+//     let file = File::open(path)?;
+//     Ok(io::BufReader::new(file).lines())
+// }
