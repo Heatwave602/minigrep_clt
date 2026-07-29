@@ -50,8 +50,11 @@ impl<'a> Config<'a> {
 
         let query     = &args[1];
         let file_path = &args[2];
-        let ignore_case = env::var("IGNORE_CASE").is_ok();
 
-        Ok(Config { query, file_path, ignore_case })
+        let ignore_case = env::var("IGNORE_CASE").is_ok();
+        let case_sensitive = !env::var("CASE_SENSITIVE").is_ok();
+        let ignore_case = (ignore_case || (len > 3 && args[3] == "-ic")) && case_sensitive;
+       
+        Ok(Config { query, file_path, ignore_case: ignore_case })
     }
 }
