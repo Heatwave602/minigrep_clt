@@ -10,13 +10,13 @@ fn main() {
     // parser cl arguments
     let config = Config::build(&args).
         unwrap_or_else(|err| {
-            println!("Problem parsing arguments: {err}");
+            eprintln!("Problem parsing arguments: {err}");
             process::exit(1);
         });
 
     // error handling
     if let Err(err) = run(&config) {
-        println!("Application error: {err}");
+        eprintln!("Application error: {err}");
         process::exit(1);
     };
 }
