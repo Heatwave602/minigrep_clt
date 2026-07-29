@@ -4,8 +4,14 @@ minigrep is a simpler version of the CLT grep/ripgrep
 
 This is an exercise of the rust programming language book by the Brown university
 
-## TODO
-Implement precedence by having a command-line argument that enables/disables match with case sensitivity and an environment variable at the same time (that would do the opposite of the cl-arg), and decide wich to take into account.
-^
-|
-prioritize env. var.
+
+
+## Env. variables - higher precedence than CL args
+- CASE_SENSITIVE: the same as default         (+)
+- IGNORE_CASE: disables case sensitive search (-)
+
+## Command-line arguments - less precedence than Env. variables
+- -ic: changes flag to disable case sensitive search (+)
+- all other: by default, the match is case sensitive (-)
+
+p.s: "+" means higher precedence than other(s) and "-" means less
