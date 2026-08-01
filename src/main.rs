@@ -5,10 +5,8 @@ use std::error::Error;
 use minigrep::{case_insensitive_search, search};
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-
     // parser cl arguments
-    let config = Config::build(&args).
+    let config = Config::build(env::args()).
         unwrap_or_else(|err| {
             eprintln!("Problem parsing arguments: {err}");
             process::exit(1);
@@ -22,13 +20,13 @@ fn main() {
 }
 
 fn run(config: &Config) -> Result<(), Box<dyn Error>> {
-    let contents = fs::read_to_string(config.file_path)?;
+    let contents = fs::read_to_string(&config.file_path)?;
     
     let lines = if config.ignore_case {
-        case_insensitive_search(config.query, &contents)
+        case_insensitive_search(&config.query, &contents)
     }
     else {
-        search(config.query, &contents)
+        search(&config.query, &contents)
     };
     for line in lines {
         println!("{line}");
@@ -37,24 +35,42 @@ fn run(config: &Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-struct Config<'a> {
-    query:      &'a str,
-    file_path:  &'a str,
+struct Config {
+    query:      String,
+    file_path:  String,
     ignore_case: bool,
 }
 
-impl<'a> Config<'a> {
-    fn build(args: &'a [String]) -> Result<Config<'a>, &'static str> {
-        let len = args.len();
-        if len < 3 {return Err("not enough arguments");}
+impl<'a> Config {
+    fn build(
+        mut args: impl Iterator<Item = String>,
+    ) -> Result<Config, &'static str> {
+        args.next();
 
-        let query     = &args[1];
-        let file_path = &args[2];
+        let query = match args.next() {
+            Some(q) => q,
+            None => return Err("not enough arguments"),
+        };
+        let file_path = match args.next() {
+            Some(p) => p,
+            None => return Err("not enough arguments"),
+        };
+
+        // let len = args.len();
+        // if len < 3 {return Err("not enough arguments");}
+
+        // let query     = &args[1];
+        // let file_path = &args[2];
 
         let ignore_case = env::var("IGNORE_CASE").is_ok();
         let case_sensitive = !env::var("CASE_SENSITIVE").is_ok();
-        let ignore_case = (ignore_case || (len > 3 && args[3] == "-ic")) && case_sensitive;
-       
-        Ok(Config { query, file_path, ignore_case: ignore_case })
+        let ignore_case = 
+        (ignore_case || 
+        match args.next() {
+            Some(arg) => arg == "-ic",
+            None => false,
+        }) && case_sensitive;
+        
+        Ok(Config { query, file_path, ignore_case})
     }
 }
