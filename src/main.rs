@@ -22,11 +22,11 @@ fn main() {
 fn run(config: &Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(&config.file_path)?;
     
-    let lines = if config.ignore_case {
-        case_insensitive_search(&config.query, &contents)
+    let lines: Box<dyn Iterator<Item = &str>> = if config.ignore_case {
+        Box::new(case_insensitive_search(&config.query, &contents))
     }
     else {
-        search(&config.query, &contents)
+        Box::new(search(&config.query, &contents))
     };
     for line in lines {
         println!("{line}");
